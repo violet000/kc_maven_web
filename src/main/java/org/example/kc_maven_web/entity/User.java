@@ -14,6 +14,8 @@ public class User {
     
     private String password;
     
+    private String image;  // 人脸图片base64数据
+    
     private String nickname;
     
     private String email;

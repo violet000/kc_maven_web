@@ -1,6 +1,7 @@
 package org.example.kc_maven_web.controller;
 
 import org.example.kc_maven_web.common.Result;
+import org.example.kc_maven_web.dto.CashBoxCheckDTO;
 import org.example.kc_maven_web.entity.CashBox;
 import org.example.kc_maven_web.service.CashBoxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,10 @@ public class CashBoxController {
     public Result<Boolean> updateScanStatus(@RequestBody CashBox cashBox) {
         boolean success = cashBoxService.updateScanStatus(cashBox.getBoxCode(), cashBox.getScanStatus());
         return Result.success(success);
+    }
+
+    @PostMapping("/check")
+    public Result checkCashBoxes(@RequestParam String pointCode, @RequestBody CashBoxCheckDTO dto) {
+        return cashBoxService.checkCashBoxes(pointCode, dto.getCashBoxList());
     }
 } 

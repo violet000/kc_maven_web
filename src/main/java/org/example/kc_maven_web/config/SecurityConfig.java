@@ -33,6 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/storage/escort-route/**").permitAll()  // 押运线路相关接口
             .antMatchers("/storage/cash-box/list/**").permitAll()
             .antMatchers("/storage/cash-box/scan-status/**").permitAll()
+            .antMatchers("/storage/cash-box/check/**").permitAll()
+            .antMatchers("/storage/point/update-status/**").permitAll()
             .anyRequest().authenticated();
     }
 }

@@ -8,7 +8,8 @@ USE kychen;
 CREATE TABLE IF NOT EXISTS sys_user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL,
+    password VARCHAR(100),
+    image VARCHAR(100),
     nickname VARCHAR(50),
     email VARCHAR(100),
     phone VARCHAR(20),
@@ -19,5 +20,7 @@ CREATE TABLE IF NOT EXISTS sys_user (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 插入测试用户（密码：123456的MD5是e10adc3949ba59abbe56e057f20f883e，然后再用BCrypt加密）
-INSERT INTO sys_user (username, password, nickname, status)
-VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', 'admin', 1);
+INSERT INTO sys_user (username, password, image, nickname, status)
+VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '33333', 'admin', 1);
+INSERT INTO sys_user (username, password, image, nickname, status)
+VALUES ('admin2', 'e10adc3949ba59abbe56e057f20f883e', '44444', 'admin2', 1);

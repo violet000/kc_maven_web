@@ -2,6 +2,7 @@ package org.example.kc_maven_web.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import org.example.kc_maven_web.common.Result;
 import org.example.kc_maven_web.entity.CashBox;
 import org.example.kc_maven_web.mapper.CashBoxMapper;
 import org.example.kc_maven_web.service.CashBoxService;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -75,5 +77,36 @@ public class CashBoxServiceImpl implements CashBoxService {
         }
         
         return success;
+    }
+
+    @Override
+    @Transactional
+    public Result checkCashBoxes(String pointCode, List<String> cashBoxList) {
+        // 1. 查询当前线路下的所有箱子
+        List<CashBox> allBoxes = cashBoxMapper.selectByPointCode(pointCode);
+        
+        // 2. 检查箱子数量是否一致
+        if (allBoxes.size() != cashBoxList.size()) {
+            return Result.error("扫描的箱子数量与线路箱子总数不一致");
+        }
+
+        // 3. 检查箱子编号是否一致
+        List<String> allBoxCodes = allBoxes.stream()
+                .map(CashBox::getBoxCode)
+                .collect(Collectors.toList());
+        
+        if (!allBoxCodes.containsAll(cashBoxList) || !cashBoxList.containsAll(allBoxCodes)) {
+            return Result.error("扫描的箱子与线路箱子不匹配");
+        }
+
+        // 4. 检查所有箱子是否都已扫描
+        boolean allScanned = allBoxes.stream()
+                .allMatch(box -> box.getScanStatus() != null && box.getScanStatus() == 1);
+
+        if (!allScanned) {
+            return Result.error("存在未扫描的箱子");
+        }
+
+        return Result.success("所有箱子已正确扫描");
     }
 } 

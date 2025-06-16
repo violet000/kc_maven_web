@@ -28,19 +28,41 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginVO login(LoginDTO loginDTO) {
+        log.info("登录请求参数: username={}, password={}, image={}", 
+            loginDTO.getUsername(),
+            loginDTO.getPassword() != null ? "已提供" : "未提供",
+            loginDTO.getImage() != null ? "已提供" : "未提供");
+            
         User user = getUserByUsername(loginDTO.getUsername());
         if (user == null) {
             throw new RuntimeException("用户不存在");
         }
         
+        // 检查是否提供了密码或图片
+        if ((loginDTO.getPassword() == null || loginDTO.getPassword().isEmpty()) 
+            && (loginDTO.getImage() == null || loginDTO.getImage().isEmpty())) {
+            throw new RuntimeException("请输入密码或上传人脸照片");
+        }
+        
         // 前端传来的已经是MD5加密后的密码，直接用BCrypt校验
-        boolean matches = loginDTO.getPassword().equals(user.getPassword());
-        log.info("Input password: {}", loginDTO.getPassword());
-        log.info("Stored password: {}", user.getPassword());
-        log.info("Password matches: {}", matches);
+        boolean matches = false;
+        if (loginDTO.getPassword() != null && !loginDTO.getPassword().isEmpty()) {
+            matches = loginDTO.getPassword().equals(user.getPassword());
+            log.info("使用密码登录");
+        } else if (loginDTO.getImage() != null && !loginDTO.getImage().isEmpty()) {
+            // TODO: 这里需要添加人脸识别的逻辑
+            matches = true; // 临时设置为true，实际应该调用人脸识别服务
+            log.info("使用人脸识别登录");
+        }
+        
+        log.info("验证结果: 密码匹配={}", matches);
         
         if (!matches) {
-            throw new RuntimeException("密码错误");
+            if (loginDTO.getPassword() != null && !loginDTO.getPassword().isEmpty()) {
+                throw new RuntimeException("密码错误");
+            } else {
+                throw new RuntimeException("人脸识别失败");
+            }
         }
         
         if (user.getStatus() != 1) {

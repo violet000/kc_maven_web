@@ -1,6 +1,7 @@
 package org.example.kc_maven_web.service;
 
 import org.example.kc_maven_web.entity.CashBox;
+import org.example.kc_maven_web.common.Result;
 import java.util.List;
 
 public interface CashBoxService {
@@ -18,4 +19,6 @@ public interface CashBoxService {
      * @return 是否更新成功
      */
     boolean updateScanStatus(String boxCode, Integer scanStatus);
+
+    Result checkCashBoxes(String pointCode, List<String> cashBoxList);
 }
