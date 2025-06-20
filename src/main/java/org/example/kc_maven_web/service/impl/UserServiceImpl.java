@@ -37,21 +37,19 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new RuntimeException("用户不存在");
         }
-        
-        // 检查是否提供了密码或图片
+
         if ((loginDTO.getPassword() == null || loginDTO.getPassword().isEmpty()) 
             && (loginDTO.getImage() == null || loginDTO.getImage().isEmpty())) {
             throw new RuntimeException("请输入密码或上传人脸照片");
         }
-        
-        // 前端传来的已经是MD5加密后的密码，直接用BCrypt校验
+
         boolean matches = false;
         if (loginDTO.getPassword() != null && !loginDTO.getPassword().isEmpty()) {
             matches = loginDTO.getPassword().equals(user.getPassword());
             log.info("使用密码登录");
         } else if (loginDTO.getImage() != null && !loginDTO.getImage().isEmpty()) {
             // TODO: 这里需要添加人脸识别的逻辑
-            matches = true; // 临时设置为true，实际应该调用人脸识别服务
+            matches = true;
             log.info("使用人脸识别登录");
         }
         
